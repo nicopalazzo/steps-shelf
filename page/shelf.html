@@ -294,7 +294,7 @@ details pre { margin: 0 0 4px; white-space: pre-wrap; overflow-wrap: anywhere; f
     if (state === 'loading') { list.append(note('Loading your pins…', 'Your steps will appear in a moment.')); return; }
     if (state === 'nodb') { list.append(note('Saved pins aren’t available here', 'Open this page from your Claude app while signed in to see and tick your steps.')); return; }
     if (state === 'error') { list.append(note('Couldn’t load your pins', 'Reload the page. If it keeps failing, tell Claude in the chat.')); return; }
-    if (!pins.length) { list.append(note('Nothing pinned yet', 'Steps you pin show up here, ready to tick off.', 'pin the steps')); return; }
+    if (!pins.length) { list.append(note('Nothing on the shelf yet', 'Steps you add show up here, ready to tick off.', 'add to the shelf')); return; }
     var shown = pins.filter(visible);
     if (!shown.length) {
       if (mineOnly && !me) { list.append(note('Enter your name', 'Type your name above to see only the pins that carry it.')); return; }

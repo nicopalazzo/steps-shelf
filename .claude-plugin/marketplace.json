@@ -5,7 +5,7 @@
     {
       "name": "steps-shelf",
       "source": "./",
-      "description": "Pin steps to a shared Steps shelf artifact and track them live."
+      "description": "Add steps to a shared Steps shelf artifact and track them live."
     }
   ]
 }
