@@ -9,6 +9,12 @@ All notable changes to steps-shelf. The format follows [Keep a Changelog](https:
 - Screenshots of the shelf page (sample data) in the README.
 - Repository standards: licence, contributing guide, security note, issue and PR templates, a `check` workflow and a secret scan.
 
+## [0.2.2] - 2026-10-16
+
+### Changed
+
+- The skill opens the shelf in the side pane every time it reads the shelf, not only after a pin.
+
 ## [0.2.1] - 2026-10-16
 
 ### Added
