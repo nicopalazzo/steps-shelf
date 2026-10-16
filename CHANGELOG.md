@@ -9,6 +9,13 @@ All notable changes to steps-shelf. The format follows [Keep a Changelog](https:
 - Screenshots of the shelf page (sample data) in the README.
 - Repository standards: licence, contributing guide, security note, issue and PR templates, a `check` workflow and a secret scan.
 
+## [0.3.0] - 2026-10-16
+
+### Changed
+
+- Each user gets their own shelf. The skill reads the shelf link from `~/.claude/steps-shelf-url` and, when the file is missing, offers once to publish the shelf page as the user's own private artifact.
+- The repo no longer contains any shelf link. A check fails if one is added.
+
 ## [0.2.2] - 2026-10-16
 
 ### Changed

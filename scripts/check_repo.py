@@ -58,6 +58,18 @@ page = ROOT / "page" / "shelf.html"
 if not page.exists() or "<title>" not in page.read_text(encoding="utf-8"):
     errors.append("page/shelf.html: missing or has no <title>")
 
+LINK = "claude.ai/" + "artifact/"
+SKIP_DIRS = {".git", "docs"}
+for path in ROOT.rglob("*"):
+    if not path.is_file() or SKIP_DIRS & set(path.relative_to(ROOT).parts):
+        continue
+    try:
+        body = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        continue
+    if LINK in body:
+        errors.append(f"{path.relative_to(ROOT)}: contains a shelf link; keep it in ~/.claude/steps-shelf-url")
+
 if errors:
     print("\n".join(errors))
     sys.exit(1)
