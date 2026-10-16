@@ -1,1 +1,10 @@
+# macOS
 .DS_Store
+
+# Dependencies and logs
+node_modules/
+*.log
+
+# Secrets: never commit these
+.env
+.env.*
