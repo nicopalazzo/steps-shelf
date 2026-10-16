@@ -1,8 +1,8 @@
 # Steps shelf
 
-Pin the steps from a Claude reply to your own Steps shelf (a published Claude artifact with a database). Tick them from any device. Claude reads your progress, helps with a stuck step and sets reminders.
+Add the steps from a Claude reply to your own Steps shelf (a published Claude artifact with a database). Tick them from any device. Claude reads your progress, helps with a stuck step and sets reminders.
 
-Say "pin the steps" after a reply with steps, or "what's open?" to read the shelf. Claude opens the shelf in the side panel each time.
+Say "add to the shelf" after a reply with steps, or "what's open?" to read the shelf. Claude opens the shelf in the side panel each time.
 
 ## Install (Claude Code)
 
@@ -13,7 +13,7 @@ claude plugin install steps-shelf@steps-shelf-marketplace
 
 ## Setup
 
-The first time you say "pin the steps", Claude sees you have no shelf yet and asks once: "Create one?" On a yes it publishes `page/shelf.html` as a new artifact on your account and saves its link in `~/.claude/steps-shelf-url` on your machine. After that it never asks again.
+The first time you say "add to the shelf", Claude sees you have no shelf yet and asks once: "Create one?" On a yes it publishes `page/shelf.html` as a new artifact on your account and saves its link in `~/.claude/steps-shelf-url` on your machine. After that it never asks again.
 
 - Your shelf is private. Share it from the artifact's Share menu only if you want to.
 - The link is never stored in this repo or in the plugin.
@@ -43,6 +43,7 @@ Local test: `claude --plugin-dir <this folder>`
 
 ## Changes
 
+- 0.3.1: the command is "add to the shelf" (not "pin the steps"). Existing shelves keep working.
 - 0.3.0: each user gets their own shelf, created on first use. No shelf link in the repo.
 - 0.2.2: the shelf opens every time it is read, not only after a pin.
 - 0.2.0: owner on pins; name field and "Only my pins"; Delete on archived pins (the skill deletes only when asked).

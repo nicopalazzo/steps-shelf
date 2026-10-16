@@ -9,6 +9,12 @@ All notable changes to steps-shelf. The format follows [Keep a Changelog](https:
 - Screenshots of the shelf page (sample data) in the README.
 - Repository standards: licence, contributing guide, security note, issue and PR templates, a `check` workflow and a secret scan.
 
+## [0.3.1] - 2026-10-16
+
+### Changed
+
+- The spoken command is now "add to the shelf" instead of "pin the steps", because another tool uses "pin". The skill ignores the word "pin". Stored data (the `pins` collection and `p-` ids) is unchanged, so existing shelves keep working.
+
 ## [0.3.0] - 2026-10-16
 
 ### Changed
