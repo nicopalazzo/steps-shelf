@@ -1,0 +1,11 @@
+{
+  "name": "steps-shelf-marketplace",
+  "owner": { "name": "Nicolas Palazzo" },
+  "plugins": [
+    {
+      "name": "steps-shelf",
+      "source": "./",
+      "description": "Pin steps to a shared Steps shelf artifact and track them live."
+    }
+  ]
+}

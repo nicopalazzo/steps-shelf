@@ -1,0 +1,6 @@
+{
+  "name": "steps-shelf",
+  "description": "Pin steps from Claude's replies to a shared Steps shelf artifact, read ticks, help with stuck steps, and set reminders.",
+  "version": "0.2.0",
+  "author": { "name": "Nicolas Palazzo" }
+}

@@ -1,0 +1,342 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Steps shelf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* One column of pin cards. Each card is a short numbered sequence; the first unticked step is the live one. */
+:root {
+  --bg: #F4F6F4;
+  --surface: #FFFFFF;
+  --ink: #16201B;
+  --muted: #5C6A63;
+  --line: #DDE3DF;
+  --line-strong: #B9C4BE;
+  --accent: #2B4BD6;
+  --accent-soft: #E6EBFD;
+  --done: #2C7A57;
+  --on-done: #FFFFFF;
+  --warn: #B4531A;
+  --warn-soft: #FCEBDD;
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1411; --surface: #171E1A; --ink: #E7EDE9; --muted: #9AA8A0;
+    --line: #27312B; --line-strong: #3C4A42; --accent: #9DB0FF; --accent-soft: #1E2747;
+    --done: #5CC08F; --on-done: #0F1411; --warn: #F0A56A; --warn-soft: #3A2616; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1411; --surface: #171E1A; --ink: #E7EDE9; --muted: #9AA8A0;
+  --line: #27312B; --line-strong: #3C4A42; --accent: #9DB0FF; --accent-soft: #1E2747;
+  --done: #5CC08F; --on-done: #0F1411; --warn: #F0A56A; --warn-soft: #3A2616; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 640px; margin: 0 auto; padding-block: 20px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 16px; }
+header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 28px; line-height: 1.1; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.count { font-family: var(--font-mono); font-size: 12px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line-strong); border-radius: 10px; padding: 3px; gap: 3px; background: var(--surface); }
+.seg button { font: inherit; font-size: 14px; font-weight: 500; min-height: 40px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.who { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.who label { font-size: 13px; color: var(--muted); }
+.who input[type="text"] { font: inherit; font-size: 14px; min-height: 36px; width: 11em; max-width: 100%; padding: 0 10px; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 8px; }
+.who .mine { display: flex; align-items: center; gap: 6px; }
+.who .mine input { width: 18px; height: 18px; accent-color: var(--accent); }
+button:focus-visible, summary:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#list { display: flex; flex-direction: column; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.card h2 { font-family: var(--font-display); font-weight: 600; font-size: 18px; line-height: 1.25; margin: 0; text-wrap: balance; min-width: 0; overflow-wrap: anywhere; }
+.meta { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin: 4px 0 0; overflow-wrap: anywhere; }
+.owner { display: inline-block; font-family: var(--font-mono); font-size: 11px; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 1px 7px; margin-top: 6px; overflow-wrap: anywhere; }
+.prog { font-family: var(--font-mono); font-size: 13px; font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+.card.complete .prog { color: var(--done); }
+.bar { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--accent); }
+.card.complete .bar > i { background: var(--done); }
+ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.step { display: flex; flex-direction: column; border-radius: 8px; }
+.step.current { background: var(--accent-soft); }
+.step.stuck { background: var(--warn-soft); }
+.step.stuck .num { border-color: var(--warn); color: var(--warn); }
+.help.warn { color: var(--warn); border-color: var(--warn); }
+.stuckmsg { margin: 0 8px 0 48px; font-size: 13px; color: var(--warn); }
+.step-row { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start; width: 100%; min-height: 44px; padding: 8px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: 8px; }
+.num { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--line-strong); display: grid; place-items: center; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.step.current .num { border-color: var(--accent); color: var(--accent); }
+.step.done .num { background: var(--done); border-color: var(--done); color: var(--on-done); }
+.txt { padding-top: 3px; overflow-wrap: anywhere; }
+.step.done .txt { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+.help { align-self: flex-start; margin: 0 8px 8px 48px; min-height: 36px; padding: 0 12px; font: inherit; font-size: 13px; font-weight: 500; color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 8px; cursor: pointer; }
+.foot-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+details summary { font-size: 13px; color: var(--muted); cursor: pointer; min-height: 36px; display: flex; align-items: center; }
+details pre { margin: 0 0 4px; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; color: var(--muted); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px; max-height: 280px; overflow: auto; }
+.ghost { font: inherit; font-size: 13px; min-height: 36px; padding: 0 12px; color: var(--muted); background: transparent; border: 1px solid var(--line-strong); border-radius: 8px; cursor: pointer; }
+.acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.ghost.danger { color: var(--warn); border-color: var(--warn); }
+.note { border: 1px dashed var(--line-strong); border-radius: 12px; padding: 20px 16px; display: flex; flex-direction: column; gap: 6px; }
+.note h2 { font-family: var(--font-display); font-weight: 600; font-size: 18px; margin: 0; }
+.note p { margin: 0; color: var(--muted); max-width: 46ch; }
+.note code { font-family: var(--font-mono); font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; }
+#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); max-width: min(92vw, 420px); background: var(--ink); color: var(--bg); font-size: 14px; padding: 10px 14px; border-radius: 10px; opacity: 0; pointer-events: none; transition: opacity .18s; overflow-wrap: anywhere; }
+#toast.on { opacity: 1; }
+.sr { position: absolute; left: -9999px; }
+@media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
+</style>
+
+<main class="wrap">
+  <header>
+    <h1>Steps shelf</h1>
+    <span class="count" id="count" aria-live="polite"></span>
+  </header>
+  <div class="seg" id="seg" role="group" aria-label="Filter pins">
+    <button type="button" data-f="open" aria-pressed="true">Open</button>
+    <button type="button" data-f="done" aria-pressed="false">Done</button>
+    <button type="button" data-f="all" aria-pressed="false">All</button>
+    <button type="button" data-f="archived" aria-pressed="false">Archived</button>
+  </div>
+  <div class="who">
+    <label for="me">Your name</label>
+    <input type="text" id="me" autocomplete="off" placeholder="e.g. Nicolas">
+    <label class="mine" for="mineOnly"><input type="checkbox" id="mineOnly"> Only my pins</label>
+  </div>
+  <section id="list" aria-live="polite"></section>
+</main>
+<div id="toast" role="status"></div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var db = null, pins = [], filter = 'open', state = 'loading', openOrig = new Set(), chains = {}, toastTimer = null;
+  var me = '', mineOnly = false, confirmDel = null;
+
+  function lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  function h(tag, props) {
+    var e = document.createElement(tag), k, v, kids = Array.prototype.slice.call(arguments, 2);
+    for (k in (props || {})) {
+      v = props[k];
+      if (k === 'class') e.className = v;
+      else if (k === 'text') e.textContent = v;
+      else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), v);
+      else if (v !== false && v != null) e.setAttribute(k, v === true ? '' : v);
+    }
+    [].concat.apply([], kids).forEach(function (c) { if (c != null) e.append(c); });
+    return e;
+  }
+
+  function toast(msg, ms) {
+    var t = $('toast');
+    t.textContent = msg;
+    t.classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('on'); }, ms || 2400);
+  }
+
+  function isDone(p) { return p.steps.length > 0 && p.steps.every(function (s) { return s.done; }); }
+  var matches = {
+    open: function (p) { return p.status !== 'archived' && !isDone(p); },
+    done: function (p) { return p.status !== 'archived' && isDone(p); },
+    all: function (p) { return p.status !== 'archived'; },
+    archived: function (p) { return p.status === 'archived'; }
+  };
+
+  function isMine(p) {
+    return !!me && !!p.owner && p.owner.trim().toLowerCase() === me.trim().toLowerCase();
+  }
+
+  function fmt(iso) {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(d);
+  }
+
+  function save(id, data) {
+    var p = (chains[id] || Promise.resolve()).then(function () {
+      return db.doc('pins/' + id).update(data);
+    }).catch(function () {
+      toast("Couldn't save that change. Check your connection and try again.", 3600);
+    });
+    chains[id] = p;
+    return p;
+  }
+
+  function copyText(t, okMsg0) {
+    var okMsg = okMsg0 || 'Copied. Paste it into your chat with Claude.';
+    function legacy() {
+      try {
+        var ta = h('textarea', { readonly: true, class: 'sr' });
+        ta.value = t;
+        document.body.append(ta);
+        ta.select();
+        var ok = document.execCommand('copy');
+        ta.remove();
+        if (ok) { toast(okMsg); return; }
+      } catch (e) {}
+      toast('Select and copy: ' + t, 9000);
+    }
+    try {
+      navigator.clipboard.writeText(t).then(function () { toast(okMsg); }, legacy);
+    } catch (e) { legacy(); }
+  }
+
+  function toggleStep(p, i) {
+    var wasDone = p.steps[i].done;
+    p.steps = p.steps.map(function (s, j) { return j === i ? { text: s.text, done: !s.done } : s; });
+    var data = { steps: p.steps };
+    if (!wasDone && p.stuck && p.stuck.step === i) { p.stuck = null; data.stuck = null; }
+    render();
+    save(p.id, data);
+  }
+
+  function setStuck(p, i, on) {
+    p.stuck = on ? { step: i, at: new Date().toISOString() } : null;
+    render();
+    save(p.id, { stuck: p.stuck });
+    if (on) copyText('I\'m stuck on step ' + (i + 1) + ' of "' + p.title + '": ' + p.steps[i].text, 'Flagged for Claude. Say "help with my stuck step" in the chat.');
+  }
+
+  function setStatus(p, status) {
+    p.status = status;
+    render();
+    save(p.id, { status: status });
+  }
+
+  function deletePin(p) {
+    confirmDel = null;
+    pins = pins.filter(function (x) { return x.id !== p.id; });
+    render();
+    (chains[p.id] || Promise.resolve()).then(function () {
+      return db.doc('pins/' + p.id).delete();
+    }).catch(function () {
+      toast("Couldn't delete that pin. Reload the page and try again.", 3600);
+    });
+  }
+
+  function card(p) {
+    var total = p.steps.length, doneN = p.steps.filter(function (s) { return s.done; }).length;
+    var cur = p.steps.findIndex(function (s) { return !s.done; });
+    var pct = total ? Math.round(doneN / total * 100) : 0;
+    var when = p.createdAt ? fmt(p.createdAt) : '';
+    var rem = p.remindAt ? 'Reminder ' + fmt(p.remindAt) : '';
+    var meta = [p.source, when, rem].filter(Boolean).join(' · ');
+
+    var ol = h('ol', null, p.steps.map(function (s, i) {
+      var isCur = i === cur;
+      var isStuck = !s.done && p.stuck && p.stuck.step === i;
+      var cls = 'step' + (s.done ? ' done' : '') + (isCur ? ' current' : '') + (isStuck ? ' stuck' : '');
+      var row = h('button', { type: 'button', class: 'step-row', 'aria-pressed': s.done ? 'true' : 'false', onclick: function () { toggleStep(p, i); } },
+        h('span', { class: 'num', 'aria-hidden': 'true', text: s.done ? '✓' : String(i + 1) }),
+        h('span', { class: 'txt', text: s.text }));
+      var li = h('li', { class: cls }, row);
+      if (isStuck) {
+        li.append(h('p', { class: 'stuckmsg', text: 'Flagged. Say "help with my stuck step" in the chat.' }));
+        li.append(h('button', { type: 'button', class: 'help warn', onclick: function () { setStuck(p, i, false); } }, 'Clear flag'));
+      } else if (isCur) {
+        li.append(h('button', { type: 'button', class: 'help', onclick: function () { setStuck(p, i, true); } }, 'I\'m stuck here'));
+      }
+      return li;
+    }));
+
+    var foot = h('div', { class: 'foot-row' });
+    if (p.original) {
+      var d = h('details', null, h('summary', { text: 'Original reply' }), h('pre', { text: p.original }));
+      if (openOrig.has(p.id)) d.open = true;
+      d.addEventListener('toggle', function () { if (d.open) openOrig.add(p.id); else openOrig.delete(p.id); });
+      foot.append(d);
+    } else {
+      foot.append(h('span'));
+    }
+    var acts = h('div', { class: 'acts' });
+    if (p.status === 'archived') {
+      acts.append(h('button', { type: 'button', class: 'ghost', onclick: function () { setStatus(p, 'open'); } }, 'Restore'));
+      acts.append(h('button', { type: 'button', class: 'ghost danger', onclick: function () { deletePin(p); } }, 'Delete'));
+    } else {
+      acts.append(h('button', { type: 'button', class: 'ghost', onclick: function () { setStatus(p, 'archived'); } }, 'Archive'));
+    }
+    foot.append(acts);
+
+    return h('article', { class: 'card' + (isDone(p) ? ' complete' : '') },
+      h('div', { class: 'card-head' },
+        h('div', { style: 'min-width:0' },
+          h('h2', { text: p.title || 'Untitled pin' }),
+          meta ? h('p', { class: 'meta', text: meta }) : null,
+          p.owner ? h('span', { class: 'owner', text: p.owner }) : null),
+        h('span', { class: 'prog', text: doneN + '/' + total })),
+      h('div', { class: 'bar', role: 'img', 'aria-label': pct + ' percent done' }, h('i', { style: 'width:' + pct + '%' })),
+      ol, foot);
+  }
+
+  function note(title, body, code) {
+    var p = h('p', { text: body });
+    var n = h('div', { class: 'note' }, h('h2', { text: title }), p);
+    if (code) n.append(h('p', null, 'Say ', h('code', { text: code }), ' after any reply with steps.'));
+    return n;
+  }
+
+  function visible(p) {
+    if (!matches[filter](p)) return false;
+    if (mineOnly && me && !isMine(p)) return false;
+    return true;
+  }
+
+  function render() {
+    var list = $('list');
+    list.replaceChildren();
+    var openCount = pins.filter(function (p) { return matches.open(p) && (!mineOnly || !me || isMine(p)); }).length;
+    $('count').textContent = state === 'ready' ? openCount + ' open' : '';
+    if (state === 'loading') { list.append(note('Loading your pins…', 'Your steps will appear in a moment.')); return; }
+    if (state === 'nodb') { list.append(note('Saved pins aren’t available here', 'Open this page from your Claude app while signed in to see and tick your steps.')); return; }
+    if (state === 'error') { list.append(note('Couldn’t load your pins', 'Reload the page. If it keeps failing, tell Claude in the chat.')); return; }
+    if (!pins.length) { list.append(note('Nothing pinned yet', 'Steps you pin show up here, ready to tick off.', 'pin the steps')); return; }
+    var shown = pins.filter(visible);
+    if (!shown.length) {
+      if (mineOnly && !me) { list.append(note('Enter your name', 'Type your name above to see only the pins that carry it.')); return; }
+      var msgs = { open: 'Everything is ticked off.', done: 'No finished pins yet.', all: 'No active pins.', archived: 'No archived pins.' };
+      list.append(note('Nothing here', mineOnly ? 'No pins with your name in this view.' : msgs[filter])); return;
+    }
+    shown.forEach(function (p) { list.append(card(p)); });
+  }
+
+  $('seg').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-f]');
+    if (!b) return;
+    filter = b.getAttribute('data-f');
+    Array.prototype.forEach.call($('seg').querySelectorAll('button'), function (x) {
+      x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+    });
+    render();
+  });
+
+  me = lsGet('shelf-me');
+  mineOnly = lsGet('shelf-mine') === '1';
+  $('me').value = me;
+  $('mineOnly').checked = mineOnly;
+  $('me').addEventListener('input', function () { me = $('me').value; lsSet('shelf-me', me); render(); });
+  $('mineOnly').addEventListener('change', function () { mineOnly = $('mineOnly').checked; lsSet('shelf-mine', mineOnly ? '1' : '0'); render(); });
+
+  function normalize(id, d) {
+    var steps = Array.isArray(d.steps) ? d.steps.map(function (s) {
+      return { text: String(s && s.text != null ? s.text : ''), done: !!(s && s.done) };
+    }) : [];
+    return { id: id, title: d.title, source: d.source, owner: d.owner ? String(d.owner) : '', createdAt: d.createdAt, original: d.original, status: d.status === 'archived' ? 'archived' : 'open', steps: steps, stuck: d.stuck && typeof d.stuck.step === 'number' ? d.stuck : null, remindAt: d.remindAt || '' };
+  }
+
+  render();
+  (async function () {
+    try { db = window.claude && window.claude.use ? await window.claude.use('db') : null; } catch (e) { db = null; }
+    if (!db) { state = 'nodb'; render(); return; }
+    db.collection('pins').orderBy('createdAt', 'desc').limit(200).onSnapshot(function (snap) {
+      pins = snap.docs.map(function (d) { return normalize(d.id, d.data() || {}); });
+      state = 'ready';
+      render();
+    }, function () { state = 'error'; render(); });
+  })();
+})();
+</script>
