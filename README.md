@@ -15,6 +15,10 @@ claude plugin install steps-shelf@steps-shelf-marketplace
 
 Renders of `page/shelf.html` with made-up sample pins, not captures of a real shelf.
 
+Tick a step, then flag the next one as stuck. Ticking a flagged step clears the flag.
+
+<img src="docs/images/flow.gif" width="260" alt="Ticking step 2, flagging step 3 as stuck, then ticking step 3">
+
 | Open pins, light | Open pins, dark | Archived pin |
 |---|---|---|
 | <img src="docs/images/phone-light.png" width="260" alt="Shelf on a phone in light mode: a workshop pin with a stuck step and a second pin owned by Sam"> | <img src="docs/images/phone-dark.png" width="260" alt="The same shelf in dark mode"> | <img src="docs/images/phone-archived.png" width="260" alt="The Archived tab with Restore and Delete buttons"> |
